@@ -1,20 +1,25 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
+<div id="content">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>VBS 2019 Log Format Verification</mat-card-title>
+      <mat-card-subtitle *ngIf="!(reports|async)">Please upload the output of your log (JSON file).</mat-card-subtitle>
+      <mat-card-subtitle class="success" *ngIf="(reports|async) && (reports|async).success">Validation for <strong>{{(reports|async).filename}}</strong> was successful! <strong>{{(reports|async).numWarnings}}</strong> warnings, <strong>{{(reports|async).numInfos}}</strong> remarks. See log for more details.</mat-card-subtitle>
+      <mat-card-subtitle class="failure" *ngIf="(reports|async) && !(reports|async).success">Validation for <strong>{{(reports|async).filename}}</strong> was not successful! <strong>{{(reports|async).numErrors}}</strong> errors, <strong>{{(reports|async).numWarnings}}</strong> warnings, <strong>{{(reports|async).numInfos}}</strong> remarks. See log for more details.</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
 
+      <div *ngIf="(reports|async)">
+        <mat-list *ngIf="(reports|async).errors.length > 0">
+          <mat-list-item *ngFor="let error of (reports|async).errors" [ngClass]="{'error' : error.level == 'error', 'warning' : error.level == 'warn', 'info' : error.level == 'info'}">
+            <strong>{{error.level.toUpperCase()}}</strong>: {{error.message}}
+          </mat-list-item>
+        </mat-list>
+      </div>
+
+      <form *ngIf="!(reports|async)" class="verification-form">
+          <input type="file" accept="application/json" (change)="handleUpload($event.target.files)"/>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

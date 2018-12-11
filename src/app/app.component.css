@@ -1,0 +1,29 @@
+#content {
+    width: 600px;
+    height: 800px;
+
+    position:absolute;
+    left:0; right:0;
+    top:0; bottom:0;
+    margin:auto;
+}
+
+.success {
+    color: #009933;
+}
+
+.failure {
+    color: #b30000;
+}
+
+.error {
+    background-color: rgba(153, 0, 0, 0.2);
+}
+
+.warning {
+    background-color: rgba(255, 204, 0, 0.2);
+}
+
+.info {
+    background-color: rgba(204, 230, 255, 0.2)
+}
