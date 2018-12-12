@@ -138,13 +138,8 @@ export class VerificationService {
      */
     private validateAtomicEvent(event: AtomicEvent, index: string): ValidationError {
         /* Check if EventCategory is defined. */
-        if (event.category) {
+        if (!event.category) {
             return new ValidationError('error', `The event ${index}'s category is not defined.`);
-        }
-
-        /* Check if EventType is defined. */
-        if (event.type) {
-            return new ValidationError('error', `The event ${index}'s type is not defined.`);
         }
 
         /* Check if the EventType is one of the pre-defined types. */
@@ -152,10 +147,18 @@ export class VerificationService {
             return new ValidationError('error', `The provided category '${event.category}' for event ${index} is not one of the predefined types.`);
         }
 
+        /* Check if EventType is defined. */
+        if (!event.type || event.type.length === 0) {
+            return new ValidationError('error', `The event ${index}'s type is not defined.`);
+        }
+
         /* Check if the EventType is one of the pre-defined types. */
         const types = CategoryTypeMap.get(event.category);
-        if (types.length > 0 && types.indexOf(event.type) === -1) {
-            return new ValidationError('warn', `The provided type '${event.type}' for event ${index} is not one of the predefined types. Please check with VBS admin.`);
+        if (types.length > 0) {
+            const fail = event.type.filter(c => types.indexOf(c) === -1).join(',');
+            if (fail.length > 0) {
+                return new ValidationError('warn', `The provided types '${fail}' for event ${index} are not of the predefined type. Please check with VBS admin.`);
+            }
         }
 
         /* Everything passed! */
