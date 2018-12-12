@@ -148,8 +148,8 @@ export class VerificationService {
         }
 
         /* Check if EventType is defined. */
-        if (!event.type || event.type.length === 0) {
-            return new ValidationError('error', `The event ${index}'s type is not defined.`);
+        if (!event.type || !(event.type instanceof Array) || event.type.length === 0) {
+            return new ValidationError('error', `The event ${index}'s type is not properly defined.`);
         }
 
         /* Check if the EventType is one of the pre-defined types. */
