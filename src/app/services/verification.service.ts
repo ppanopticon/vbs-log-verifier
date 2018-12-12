@@ -64,13 +64,13 @@ export class VerificationService {
                 errors.push(new ValidationError('error', `Event ${index} is missing a timestamp!`));
                 abort = true;
             } else if (event.timestamp >= result.timestamp) {
-                errors.push(new ValidationError('warn', `The timestamp of Event ${index} lies after the submission timestamp!`));
+                errors.push(new ValidationError('warn', `The timestamp of event #${index} lies after the submission timestamp!`));
             }
 
             /* Check if timestamps are growing monotonically. */
             if (last > -1) {
                 if (event.timestamp < last) {
-                    errors.push(new ValidationError('warn', `The timestamp of Event ${index} precedes the timestamp of Event ${index}-1!`));
+                    errors.push(new ValidationError('warn', `The timestamp of event #${index} precedes the timestamp of event #${index-1}!`));
                 }
             }
             last = event.timestamp;
@@ -91,7 +91,7 @@ export class VerificationService {
                     }
                 }
             } else {
-                errors.push(new ValidationError('error', `The Event ${index} does neither conform to being an atomic nor a composit event!`));
+                errors.push(new ValidationError('error', `The event #${index} does neither conform to being an atomic nor a composit event!`));
                 abort = true;
             }
         });
@@ -111,7 +111,7 @@ export class VerificationService {
 
         /* Check if CompositEvent consists of at least two AtomicEvents. */
         if (event.actions.length <= 1) {
-            errors.push(new ValidationError('warn', `The Event ${index} is a composit event but does contain less than one action!`));
+            errors.push(new ValidationError('warn', `The event #${index} is a composit event but does contain less than one action!`));
         }
 
         /* Check each AtomicEvent. */
@@ -139,17 +139,17 @@ export class VerificationService {
     private validateAtomicEvent(event: AtomicEvent, index: string): ValidationError {
         /* Check if EventCategory is defined. */
         if (!event.category) {
-            return new ValidationError('error', `The event ${index}'s category is not defined.`);
+            return new ValidationError('error', `The event #${index}'s category is not defined.`);
         }
 
         /* Check if the EventType is one of the pre-defined types. */
         if (EventCategories.indexOf(event.category) === -1) {
-            return new ValidationError('error', `The provided category '${event.category}' for event ${index} is not one of the predefined types.`);
+            return new ValidationError('error', `The provided category '${event.category}' for event #${index} is not one of the predefined types.`);
         }
 
         /* Check if EventType is defined. */
         if (!event.type || !(event.type instanceof Array) || event.type.length === 0) {
-            return new ValidationError('error', `The event ${index}'s type is not properly defined.`);
+            return new ValidationError('error', `The event #${index}'s type is not properly defined.`);
         }
 
         /* Check if the EventType is one of the pre-defined types. */
@@ -157,7 +157,7 @@ export class VerificationService {
         if (types.length > 0) {
             const fail = event.type.filter(c => types.indexOf(c) === -1).join(',');
             if (fail.length > 0) {
-                return new ValidationError('warn', `The provided types '${fail}' for event ${index} are not of the predefined type. Please check with VBS admin.`);
+                return new ValidationError('warn', `The provided types '${fail}' for event #${index} are not contained in the list of predefined types. Please check with VBS organizers.`);
             }
         }
 
