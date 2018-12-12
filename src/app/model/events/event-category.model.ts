@@ -2,11 +2,12 @@ export type EventCategory = 'Text' | 'Image' | 'Sketch' | 'Filter' | 'Browsing' 
 
 export const EventCategories: EventCategory[] = ['Text', 'Image', 'Sketch', 'Filter', 'Browsing', 'Cooperation'];
 
-export const CategoryTypeMap = {
-    'Text' : ['metadata', 'OCR', 'ASR', 'concept', 'localizedObject', 'caption'],
-    'Image' : ['globalFeatures', 'localFeatures', 'feedbackModel'],
-    'Sketch' : ['color', 'edge', 'motion', 'semanticSegmentation'],
-    'Filter' : ['b/w', 'dominantColor', 'resolution'],
-    'Browsing' : ['rankedList', 'videoSummary', 'temporalContext', 'videoPlayer', 'exploration', 'toolLayout', 'explicitSort', 'resetAll'],
-    'Cooperation' : []
-};
+
+/* */
+export const CategoryTypeMap = new Map<string, string[]>();
+CategoryTypeMap.set('Text', ['metadata', 'OCR', 'ASR', 'concept', 'localizedObject', 'caption']);
+CategoryTypeMap.set('Image', ['globalFeatures', 'localFeatures', 'feedbackModel']);
+CategoryTypeMap.set('Sketch', ['color', 'edge', 'motion', 'semanticSegmentation']);
+CategoryTypeMap.set('Filter', ['b/w', 'dominantColor', 'resolution']);
+CategoryTypeMap.set('Browsing', ['rankedList', 'videoSummary', 'temporalContext', 'videoPlayer', 'exploration', 'toolLayout', 'explicitSort', 'resetAll']);
+CategoryTypeMap.set('Cooperation', []);
