@@ -5,6 +5,7 @@ import { AtomicEvent } from '../model/events/atomic-event.model';
 import { CompositEvent } from '../model/events/composit-event.model';
 import { SubmittedEvent } from '../model/events/event.model';
 import {ValidationReport} from '../model/reporting/validation-report.model';
+import {CategoryTypeMap, EventCategories} from '../model/events/event-category.model';
 
 @Injectable()
 export class VerificationService {
@@ -13,6 +14,9 @@ export class VerificationService {
 
     /**
      * Validates the provided JSON file.
+     *
+     * @param filename The filename (for identification purposes).
+     * @param json The raw JSON string.
      */
     public validate(filename: string, json: string): ValidationReport {
         const errors = [];
@@ -34,7 +38,7 @@ export class VerificationService {
         }
 
         /* Perform check of the event structure. */
-        ret = this.validateEventStructure(result);
+        ret = this.validateCompositEvents(result);
         errors.push(...ret[1]);
         if (ret[0]) {
             return new ValidationReport(filename, false, errors);
@@ -49,7 +53,7 @@ export class VerificationService {
      *
      * @param result The Submission object that should be checked.
      */
-    private validateEventStructure(result: Submission): [boolean, ValidationError[]] {
+    private validateCompositEvents(result: Submission): [boolean, ValidationError[]] {
         const errors = [];
         let abort = false;
         let last = -1;
@@ -71,12 +75,20 @@ export class VerificationService {
             }
             last = event.timestamp;
 
-            /* Make type specific checks. */
-            if (this.isAtomic(event)) {
 
-            } else if (this.isComposit(event)) {
-                if (event.actions.length <= 1) {
-                    errors.push(new ValidationError('warn', `The Event ${index} is a composit event but does contain less than one action!`));
+            if (this.isComposit(event)) {
+                const error = this.validateCompositEvent(event, `${index}`);
+                if (error[0]) {
+                    abort = true;
+                }
+                errors.push(...error[1]);
+            } else if (this.isAtomic(event)) {
+                const error = this.validateAtomicEvent(event, `${index}`);
+                if (error) {
+                    errors.push(error);
+                    if (error.level === 'error') {
+                        abort = true;
+                    }
                 }
             } else {
                 errors.push(new ValidationError('error', `The Event ${index} does neither conform to being an atomic nor a composit event!`));
@@ -86,6 +98,69 @@ export class VerificationService {
         return [abort, errors];
     }
 
+
+    /**
+     * Validates a CompositEvent.
+     *
+     * @param event The CompositEvent that is being validated.
+     * @param index The index of the CompositEvent.
+     */
+    private validateCompositEvent(event: CompositEvent, index: string): [boolean, ValidationError[]] {
+        const errors = [];
+        let abort = false;
+
+        /* Check if CompositEvent consists of at least two AtomicEvents. */
+        if (event.actions.length <= 1) {
+            errors.push(new ValidationError('warn', `The Event ${index} is a composit event but does contain less than one action!`));
+        }
+
+        /* Check each AtomicEvent. */
+        event.actions.forEach((e, i) => {
+            const error = this.validateAtomicEvent(e, `${index}.{$i}`);
+            if (error) {
+                errors.push(error);
+                if (error.level === 'error') {
+                    abort = true;
+                }
+            }
+        });
+
+        /* Return validation results. */
+        return [abort, errors];
+    }
+
+
+    /**
+     * Validates an AtomicEvent.
+     *
+     * @param event The AtomicEvent that is being validated.
+     * @param index The index of the AtomicEvent.
+     */
+    private validateAtomicEvent(event: AtomicEvent, index: string): ValidationError {
+        /* Check if EventCategory is defined. */
+        if (event.category) {
+            return new ValidationError('error', `The event ${index}'s category is not defined.`);
+        }
+
+        /* Check if EventType is defined. */
+        if (event.type) {
+            return new ValidationError('error', `The event ${index}'s type is not defined.`);
+        }
+
+        /* Check if the EventType is one of the pre-defined types. */
+        if (EventCategories.indexOf(event.category) === -1) {
+            return new ValidationError('error', `The provided category '${event.category}' for event ${index} is not one of the predefined types.`);
+        }
+
+        /* Check if the EventType is one of the pre-defined types. */
+        const types = CategoryTypeMap.get(event.category);
+        if (types.length > 0 && types.indexOf(event.type) === -1) {
+            return new ValidationError('warn', `The provided type '${event.type}' for event ${index} is not one of the predefined types. Please check with VBS admin.`);
+        }
+
+        /* Everything passed! */
+        return null;
+    }
 
     /**
      * Performs validation of the basic submission data structure.
