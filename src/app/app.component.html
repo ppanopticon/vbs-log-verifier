@@ -10,13 +10,13 @@
     <mat-card-content>
 
       <div *ngIf="(reports|async)">
-        <mat-list *ngIf="(reports|async).errors.length > 0">
+        <mat-list *ngIf="(reports|async).errors.length > 0" dense>
           <mat-list-item *ngFor="let error of (reports|async).errors" [ngClass]="{'error' : error.level == 'error', 'warning' : error.level == 'warn', 'info' : error.level == 'info'}">
             <mat-icon *ngIf="error.level == 'error'" mat-list-icon>error</mat-icon>
             <mat-icon *ngIf="error.level == 'warn'" mat-list-icon>warning</mat-icon>
             <mat-icon *ngIf="error.level == 'info'" mat-list-icon>chat_bubble</mat-icon>
             <h4 mat-line>{{error.level.toUpperCase()}}</h4>
-            <p mat-line>{{error.message}}</p>
+            <p mat-line [style.white-space]="'normal'" [style.overflow-x]="'auto'" >{{error.message}}</p>
           </mat-list-item>
         </mat-list>
       </div>
