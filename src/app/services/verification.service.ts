@@ -16,24 +16,32 @@ export class VerificationService {
      */
     public validate(filename: string, json: string): ValidationReport {
         const errors = [];
-        const result = <Submission>JSON.parse(json);
+        let result = null;
+
+        /* Try to parse the JSON file. */
+        try {
+            result = <Submission>JSON.parse(json);
+        } catch (e) {
+            errors.push(new ValidationError('error', `Failed to parse JSON due to an error; ${e.message}.`));
+            return new ValidationReport(filename, false, errors);
+        }
 
         /* Perform basic sanity checks. */
-        let ret = this.validateBasic(result);
+        let ret: [boolean, ValidationError[]] = this.validateBasic(result);
         errors.push(...ret[1]);
-        if (ret[0] === true) {
+        if (ret[0]) {
             return new ValidationReport(filename, false, errors);
         }
 
         /* Perform check of the event structure. */
         ret = this.validateEventStructure(result);
         errors.push(...ret[1]);
-        if (ret[0] === true) {
+        if (ret[0]) {
             return new ValidationReport(filename, false, errors);
         }
 
         /* Return all the validation errors. */
-        return new ValidationReport(filename, true, errors);;
+        return new ValidationReport(filename, true, errors);
     }
 
     /**
