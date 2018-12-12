@@ -186,16 +186,16 @@ export class VerificationService {
             errors.push(new ValidationError('info', `Member ID is ${result.memberId}`));
         }
         if (!result.timestamp) {
-            errors.push(new ValidationError('error', 'Timestamp is missing!'));
+            errors.push(new ValidationError('error', 'Submission timestamp is missing!'));
             abort = true;
         } else {
-            errors.push(new ValidationError('info', `Timestamp is ${result.memberId}`));
+            errors.push(new ValidationError('info', `Submission timestamp is ${result.timestamp}`));
         }
         if (!result.type) {
             errors.push(new ValidationError('error', 'Submission type is missing!'));
             abort = true;
         } else {
-            errors.push(new ValidationError('info', `Submission type is ${result.type}`));
+            errors.push(new ValidationError('info', `Submission type is '${result.type}'`));
         }
         if (!result.events) {
             errors.push(new ValidationError('error', 'The events element is null!'));

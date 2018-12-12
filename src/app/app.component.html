@@ -3,7 +3,7 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>VBS 2019 Log Format Verification</mat-card-title>
-      <mat-card-subtitle *ngIf="!(reports|async)">Please upload the output of your log (JSON file).</mat-card-subtitle>
+      <mat-card-subtitle *ngIf="!(reports|async)">Please upload the output of your log (JSON file) in order to get it validated.</mat-card-subtitle>
       <mat-card-subtitle class="success" *ngIf="(reports|async) && (reports|async).success">Validation for <strong>{{(reports|async).filename}}</strong> was successful! <strong>{{(reports|async).numWarnings}}</strong> warnings, <strong>{{(reports|async).numInfos}}</strong> remarks. See log for more details.</mat-card-subtitle>
       <mat-card-subtitle class="failure" *ngIf="(reports|async) && !(reports|async).success">Validation for <strong>{{(reports|async).filename}}</strong> was not successful! <strong>{{(reports|async).numErrors}}</strong> errors, <strong>{{(reports|async).numWarnings}}</strong> warnings, <strong>{{(reports|async).numInfos}}</strong> remarks. See log for more details.</mat-card-subtitle>
     </mat-card-header>
