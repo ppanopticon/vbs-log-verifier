@@ -1,13 +1,13 @@
-export type EventCategory = 'Text' | 'Image' | 'Sketch' | 'Filter' | 'Browsing' | 'Cooperation';
+export type EventCategory = 'text' | 'image' | 'sketch' | 'filter' | 'browsing' | 'cooperation';
 
-export const EventCategories: EventCategory[] = ['Text', 'Image', 'Sketch', 'Filter', 'Browsing', 'Cooperation'];
+export const EventCategories: EventCategory[] = ['text', 'image', 'sketch', 'filter', 'browsing', 'cooperation'];
 
 
 /* */
-export const CategoryTypeMap = new Map<string, string[]>();
-CategoryTypeMap.set('Text', ['metadata', 'OCR', 'ASR', 'concept', 'localizedObject', 'caption']);
-CategoryTypeMap.set('Image', ['globalFeatures', 'localFeatures', 'feedbackModel']);
-CategoryTypeMap.set('Sketch', ['color', 'edge', 'motion', 'semanticSegmentation']);
-CategoryTypeMap.set('Filter', ['b/w', 'dominantColor', 'resolution']);
-CategoryTypeMap.set('Browsing', ['rankedList', 'videoSummary', 'temporalContext', 'videoPlayer', 'exploration', 'toolLayout', 'explicitSort', 'resetAll']);
-CategoryTypeMap.set('Cooperation', []);
+export const CategoryTypeMap = new Map<EventCategory, string[]>();
+CategoryTypeMap.set('text', ['metadata', 'ocr', 'asr', 'concept', 'localizedobject', 'caption']);
+CategoryTypeMap.set('image', ['globalfeatures', 'localfeatures', 'feedbackmodel']);
+CategoryTypeMap.set('sketch', ['color', 'edge', 'motion', 'semanticsegmentation']);
+CategoryTypeMap.set('filter', ['b/w', 'dominantcolor', 'resolution']);
+CategoryTypeMap.set('browsing', ['rankedlist', 'videosummary', 'temporalcontext', 'videoplayer', 'exploration', 'toollayout', 'explicitsort', 'resetall']);
+CategoryTypeMap.set('cooperation', []);

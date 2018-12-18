@@ -5,7 +5,7 @@ import { AtomicEvent } from '../model/events/atomic-event.model';
 import { CompositEvent } from '../model/events/composit-event.model';
 import { SubmittedEvent } from '../model/events/event.model';
 import {ValidationReport} from '../model/reporting/validation-report.model';
-import {CategoryTypeMap, EventCategories} from '../model/events/event-category.model';
+import {CategoryTypeMap, EventCategories, EventCategory} from '../model/events/event-category.model';
 
 @Injectable()
 export class VerificationService {
@@ -143,7 +143,7 @@ export class VerificationService {
         }
 
         /* Check if the EventType is one of the pre-defined types. */
-        if (EventCategories.indexOf(event.category) === -1) {
+        if (EventCategories.indexOf(<EventCategory>event.category.toLowerCase()) === -1) {
             return new ValidationError('error', `The provided category '${event.category}' for event #${index} is not one of the predefined types.`);
         }
 
@@ -153,9 +153,9 @@ export class VerificationService {
         }
 
         /* Check if the EventType is one of the pre-defined types. */
-        const types = CategoryTypeMap.get(event.category);
+        const types = CategoryTypeMap.get(<EventCategory>event.category.toLowerCase());
         if (types.length > 0) {
-            const fail = event.type.filter(c => types.indexOf(c) === -1).join(',');
+            const fail = event.type.map(s => s.toLowerCase()).filter(c => types.indexOf(c) === -1).join(',');
             if (fail.length > 0) {
                 return new ValidationError('warn', `The provided types '${fail}' for event #${index} are not contained in the list of predefined types. Please check with VBS organizers.`);
             }
