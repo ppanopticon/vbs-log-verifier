@@ -7,7 +7,7 @@ import {SubmittedEvent} from './event.model';
  */
 export interface AtomicEvent extends SubmittedEvent {
     category: EventCategory;
-    type: string[];
+    type: string[] | string;
     value?: string;
     attributes?: string;
 }

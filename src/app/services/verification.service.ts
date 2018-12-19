@@ -148,14 +148,19 @@ export class VerificationService {
         }
 
         /* Check if EventType is defined. */
-        if (!event.type || !(event.type instanceof Array) || event.type.length === 0) {
+        if (!event.type || !(event.type instanceof Array || typeof event.type === 'string') || event.type.length === 0) {
             return new ValidationError('error', `The event #${index}'s type is not properly defined.`);
         }
 
         /* Check if the EventType is one of the pre-defined types. */
         const types = CategoryTypeMap.get(<EventCategory>event.category.toLowerCase());
         if (types.length > 0) {
-            const fail = event.type.map(s => s.toLowerCase()).filter(c => types.indexOf(c) === -1).join(',');
+            let fail = '';
+            if (typeof event.type === 'string') {
+                fail = types.indexOf(event.type.toLowerCase()) === -1 ? event.type : '';
+            } else {
+                fail = event.type.map(s => s.toLowerCase()).filter(c => types.indexOf(c) === -1).join(',');
+            }
             if (fail.length > 0) {
                 return new ValidationError('warn', `The provided types '${fail}' for event #${index} are not contained in the list of predefined types. Please check with VBS organizers.`);
             }
